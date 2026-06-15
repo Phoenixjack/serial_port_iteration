@@ -8,7 +8,9 @@ Check newdataregister and rcvtime[] array. get_char(portnum) DOES NOT set the ne
 DEFINES/CONSTANTS: CHAR_NL, CHAR_CR, NUM_PORTS
 */
 
-#include "Arduino.h"
+#pragma once
+
+#include <Arduino.h>
 #include <stdint.h>
 #ifndef CHAR_NL
 #define CHAR_NL (char)10
@@ -20,9 +22,9 @@ enum ports_error_level {    // list of possible error codes
   PORTS_NO_ERROR,           // no error, last operation executed with no issues
   PORTS_EXCEEDS_MAX_PORTS,  //
   PORTS_INVALID_PORT,       //
+  PORTS_INVALID_REQUEST,    // 
   PORTS_USER_IS_STUPID,     // how else do you want me to say it? i don't speak no other languages
-  PORTS_ERRONEOUS_ERROR,    // because i feel like being a smartass
-  PORTS_EROGENOUS_ERROR     // this error makes me horny. YEAH BABY!
+  PORTS_ERRONEOUS_ERROR,    // because i have a sense of humor, that's why
 };
 
 const uint8_t MAX_PORTS = 6;
@@ -31,7 +33,7 @@ public:
   explicit ports(uint8_t user_requested_ports);
   HardwareSerial* serialPorts[MAX_PORTS] = { &Serial, nullptr, nullptr, nullptr, nullptr, nullptr };
   void detectAvailablePorts();
-  bool bootmessage[MAX_PORTS] = { true, false, false, false };
+  bool bootmessage[MAX_PORTS] = { true, false, false, false, false, false };
   void init(uint8_t index);
   void init(uint8_t index, unsigned long baud);
   bool newdata(uint8_t index);
@@ -48,10 +50,10 @@ public:
   uint8_t get_data_register();
   unsigned long get_rcv_time(uint8_t* index);
 protected:
-  unsigned long rcvtime[MAX_PORTS];      // will hold the millis() of the last received message
-  uint8_t newdataregister = 0b00000000;  // will have the corresponding bit SET if new data was received
-  uint8_t faultcode = PORTS_NO_ERROR;    // register to return a fault code
-  uint8_t num_ports = 1;                 // trying to make the system scalable to multiple platforms, this will cap the max number of addressable ports
+  unsigned long rcvtime[MAX_PORTS];             // will hold the millis() of the last received message
+  uint8_t newdataregister = 0b00000000;         // will have the corresponding bit SET if new data was received
+  uint8_t faultcode = PORTS_INVALID_REQUEST;    // register to return a fault code
+  uint8_t num_ports = 1;                        // trying to make the system scalable to multiple platforms, this will cap the max number of addressable ports
 private:
   bool validindex(uint8_t* index);
   void dispbootmessage(uint8_t* index);
