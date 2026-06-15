@@ -100,7 +100,7 @@ The included sketch:
 4. sends a hello message to each configured port
 5. prints boot-message and fault status over `Serial`
 
-The example is mostly a setup/demo sketch. The `loop()` is currently empty.
+The example loop polls each configured serial port once per pass and reads at most one character from any port before moving on. This keeps the sketch from blocking or spending too long on one busy UART.
 
 ## Relationship to `serial_buffer`
 
